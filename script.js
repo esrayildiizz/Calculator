@@ -13,8 +13,6 @@ function updateDisplay() {
 }
 
 
-
-
 // calculator key içinde bulunan herhangi butona tıklayınca 
 keys.addEventListener('click', function(e) {
   const element = e.target;
@@ -26,17 +24,18 @@ keys.addEventListener('click', function(e) {
 
   //tıklanan buton sayı butonu mu yoksa operatör butonu mu kontrol edelim.
   //eğer tıklanan buton operatör butonu ise.
-  if (element.classList.constains('operatör')) {
-    console.log('operatör', element.value);
+  debugger;
+  if (element.classList.contains('operator')) {
+    console.log('operator', element.value);
     return;
   }
-  if (element.classList.constains('decimal')) {
+  if (element.classList.contains('decimal')) {
     //console.log('decimal', element.value);
     inputDecimal();
     updateDisplay();
     return;
   }
-  if (element.classList.constains('clear')) {
+  if (element.classList.contains('clear')) {
     console.log('clear', element.value);
     return;
   }
