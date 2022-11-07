@@ -4,6 +4,14 @@ const keys = document.querySelector('.calculator-keys');
 
 let displayValue = '0';
 
+//atanan ilk değer
+let firstValue = null;
+
+let operator = null;
+
+//atanan ikinci sayi
+let waitingForSecondValue = false;
+
 updateDisplay();
 
 
@@ -11,6 +19,8 @@ updateDisplay();
 function updateDisplay() {
   display.value = displayValue;
 }
+
+
 
 
 // calculator key içinde bulunan herhangi butona tıklayınca 
@@ -24,9 +34,10 @@ keys.addEventListener('click', function(e) {
 
   //tıklanan buton sayı butonu mu yoksa operatör butonu mu kontrol edelim.
   //eğer tıklanan buton operatör butonu ise.
-  debugger;
+  //contains :içerir demek.
   if (element.classList.contains('operator')) {
-    console.log('operator', element.value);
+    //console.log('operator', element.value);
+    handleOperator();
     return;
   }
   if (element.classList.contains('decimal')) {
@@ -36,7 +47,9 @@ keys.addEventListener('click', function(e) {
     return;
   }
   if (element.classList.contains('clear')) {
-    console.log('clear', element.value);
+    //console.log('clear', element.value);
+    clear();
+    updateDisplay();
     return;
   }
   //tıklamış olduğumuz butonlar inputta gözükmesi için yazılan kodlar.
@@ -46,23 +59,66 @@ keys.addEventListener('click', function(e) {
 
 });
 
+function handleOperator(nextOperator) {
+  const value = parseFloat(displayValue);
 
+  if (firstValue == null) {
+    firstValue = value;
+  } else if (operator) {
+    const result = calculate(firstValue, value, operator);
 
+    displayValue = String(result);
+    firstValue = result;
+  }
+  waitingForSecondValue = true;
+  operator = nextOperator;
+  console.log(displayValue, firstValue, operator, waitingForSecondValue);
+}
 
+//toplama işlemi için
+function calculate(first, second, operator) {
+  if (operator === '+') {
+    return first + second;
+  }
+  else if (operator === '-') {
+    return first - second;
+  }
+  else if (operator === '*') {
+    return first * second;
+  }
+  else if (operator === '/') {
+    return first / second;
+  }
 
-function inputNumber(num){
-  //girilen değerler yan yana yazılmasını istiyorum.
-  displayValue=displayValue==='0' ? num:displayValue+num;
+  return second;
+}
+
+//Sayılar için oluşturduğumuz fonksiyonlar.
+function inputNumber(num) {
+  if (waitingForSecondValue) {
+    displayValue = num;
+    waitingForSecondValue = false;
+  }
+  else {
+    //girilen değerler yan yana yazılmasını istiyorum.
+    displayValue = displayValue === '0' ? num : displayValue + num;
+  }
+
 }
 
 
-
-
-
+//nokta için oluşturduğumuz fonksiyon.
 function inputDecimal() {
   //daha önceden nokta operatörüne tıklanmış mı diye kontrol edilmeli
   // aşağıdaki kod nokta operatörü içermiyorsa demek.
-if(!displayValue.include('.')){
-  //aşağıdaki kod,nokta içermiyorda tamamdır noktayı koyabilirsin demek .
-   displayValue+='.';
-}}
+  if (!displayValue.includes('.')) {
+    //aşağıdaki kod,nokta içermiyorda tamamdır noktayı koyabilirsin demek .
+    displayValue += '.';
+  }
+}
+
+//silme için fonksiyon.
+function clear() {
+  displayValue = 0;
+}
+
