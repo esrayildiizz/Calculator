@@ -26,48 +26,49 @@ function updateDisplay() {
 // calculator key içinde bulunan herhangi butona tıklayınca 
 keys.addEventListener('click', function(e) {
   const element = e.target;
+  const value = element.value;
 
   //tıklanan elementin buton olup olmadığını kontrol etmek için aşağıdaki komutları yazdık.
   //yani buton değilse işlem return olarak devam etsin yani bundan sonraki kodlar işletilmesin.
   if (!element.matches('button')) return;
 
+  switch (value) {
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+    case '=':
+      handleOperator(value);
+      break;
+    case '.':
+      inputDecimal();
+      break;
+    case 'AC':
+      clear();
+      break;
+    default:
+      inputNumber(element.value);
 
-  //tıklanan buton sayı butonu mu yoksa operatör butonu mu kontrol edelim.
-  //eğer tıklanan buton operatör butonu ise.
-  //contains :içerir demek.
-  if (element.classList.contains('operator')) {
-    //console.log('operator', element.value);
-    handleOperator();
-    return;
   }
-  if (element.classList.contains('decimal')) {
-    //console.log('decimal', element.value);
-    inputDecimal();
-    updateDisplay();
-    return;
-  }
-  if (element.classList.contains('clear')) {
-    //console.log('clear', element.value);
-    clear();
-    updateDisplay();
-    return;
-  }
-  //tıklamış olduğumuz butonlar inputta gözükmesi için yazılan kodlar.
-  //input a yansıyan değer sayı ise:
-  inputNumber(element.value);
   updateDisplay();
-
 });
+
+
 
 function handleOperator(nextOperator) {
   const value = parseFloat(displayValue);
+
+  if (operator && waitingForSecondValue) {
+    operator = nextOperator;
+    return;
+  }
 
   if (firstValue == null) {
     firstValue = value;
   } else if (operator) {
     const result = calculate(firstValue, value, operator);
 
-    displayValue = String(result);
+    displayValue = `${parseFloat(result.toFixed(7))}`;
     firstValue = result;
   }
   waitingForSecondValue = true;
@@ -93,7 +94,7 @@ function calculate(first, second, operator) {
   return second;
 }
 
-//Sayılar için oluşturduğumuz fonksiyonlar.
+//Sayılar için oluşturduğumuz fonksiyon.
 function inputNumber(num) {
   if (waitingForSecondValue) {
     displayValue = num;
@@ -119,6 +120,6 @@ function inputDecimal() {
 
 //silme için fonksiyon.
 function clear() {
-  displayValue = 0;
+  displayValue = '0';
 }
 
